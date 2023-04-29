@@ -691,7 +691,7 @@ report
   -> String
 report src (ParseError term sp terms entities) = do
   let prefixLength = length (posName sp) + 1 + posColumn sp - 1
-  let line = Text.lines src !! (posLine sp - 1)
+  let line = fromMaybe "<eof>" $ Text.lines src !? (posLine sp - 2)
   let lineNo = show (posLine sp)
   "\n" <> posName sp <> ":" <> lineNo <> ":" <> Text.unpack line <> "\n"
     <> replicate prefixLength ' ' <> map (const ' ') lineNo <> " ^\n"
@@ -700,6 +700,11 @@ report src (ParseError term sp terms entities) = do
     <> case Set.toList entities of
          [] -> "."
          list -> ",\nas beginning of " <> makeList (map show list) <> ".\n"
+
+(!?) :: [a] -> Int -> Maybe a
+(!?) [] _ = Nothing
+(!?) (x : _) 0 = Just x
+(!?) (_ : xs) n = xs !? (n - 1)
 
 {- | Class to abstract out a position.
 -}
