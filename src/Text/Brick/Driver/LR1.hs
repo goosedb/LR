@@ -691,7 +691,7 @@ report
   -> String
 report src (ParseError term sp terms entities) = do
   let prefixLength = length (posName sp) + 1 + posColumn sp - 1
-  let line = fromMaybe "<eof>" $ Text.lines src !? (posLine sp - 2)
+  let line = fromMaybe "<eof>" $ Text.lines src !? (posLine sp - 1)
   let lineNo = show (posLine sp)
   "\n" <> posName sp <> ":" <> lineNo <> ":" <> Text.unpack line <> "\n"
     <> replicate prefixLength ' ' <> map (const ' ') lineNo <> " ^\n"
